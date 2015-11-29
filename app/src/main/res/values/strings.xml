@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">GPS SporTraker</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_maps">GPS SporTracker</string>
 </resources>
