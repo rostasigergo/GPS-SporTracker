@@ -23,22 +23,18 @@ public class LocationService extends Service implements LocationListener {
 
     private boolean locationMonitorRunning = false;
     private LDLocationManager ldLocationManager = null;
-
+    private float minDist;
     //firslocation?
     //lastlocation
 
-
-   // public int onStartCommand(Intent intent, int flags, int startId){
-
-    //}
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
 
-        //...
+        minDist = intent.getFloatExtra("minDist", 10);
         if (!locationMonitorRunning) {
             locationMonitorRunning = true;
             ldLocationManager = new LDLocationManager(getApplicationContext(),this);
-            ldLocationManager.startLocationMinitoring();
+            ldLocationManager.startLocationMinitoring(minDist);
         }
         return START_STICKY;
     }
@@ -47,7 +43,7 @@ public class LocationService extends Service implements LocationListener {
     public void onDestroy(){
         super.onDestroy();
         if (ldLocationManager != null){
-            ldLocationManager.startLocationMinitoring();
+            ldLocationManager.stopLocationMonitoring();
         }
     }
 
@@ -55,11 +51,10 @@ public class LocationService extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
 
         //First, lastlocaiton kezelés
-
         Intent locchangedintent = new Intent(BR_NEW_LOCATION);
         locchangedintent.putExtra(KEY_LOCATION,location);
         LocalBroadcastManager.getInstance(this).sendBroadcast(locchangedintent);
-        Toast.makeText(this, "Wow, a new point", Toast.LENGTH_SHORT).show();//Toastot majd törölni importból!!!
+        Toast.makeText(getApplicationContext(), "LocationChanged service point send", Toast.LENGTH_LONG).show();
     }
 
     @Override

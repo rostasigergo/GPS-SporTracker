@@ -19,8 +19,8 @@ public class LDLocationManager {
         locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
 
-    public void startLocationMinitoring(){
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,100,100,loclistener);//legalább 10 m pontos teszteléshez 50...
+    public void startLocationMinitoring(float minDist){
+        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,minDist,loclistener);//legalább 10 m pontos teszteléshez 50...
 
     }
     public void stopLocationMonitoring(){

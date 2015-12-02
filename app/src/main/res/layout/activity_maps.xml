@@ -7,20 +7,227 @@
 <fragment
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:layout_weight="80"
+    android:layout_weight="58"
     android:id="@+id/map"
     tools:context=".MapsActivity"
     android:name="com.google.android.gms.maps.SupportMapFragment" />
 
-    <Button
-        android:id="@+id/StartStop"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start"
+        android:layout_height="0dp"
+        android:layout_weight="8">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <Button
+                android:id="@+id/StartWalk"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Walk"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/walking"
+                android:background="@drawable/btn_green_matte"
+                />
+            <Button
+                android:id="@+id/StartRun"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Run"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/running"
+                android:background="@drawable/btn_green_matte"
+                />
+            <Button
+                android:id="@+id/StartBicycle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Bicycle"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/bicycle"
+                android:background="@drawable/btn_green_matte"
+                />
+            <Button
+                android:id="@+id/StartAuto"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Auto"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/car"
+                android:background="@drawable/btn_green_matte"
+                />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/Pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pause"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:visibility="invisible"
+                android:background="@drawable/btn_orange_matte"
+                />
+            <Button
+                android:id="@+id/Stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stop"
+                android:textSize="12sp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                android:background="@drawable/btn_red_matte"
+                />
+        </LinearLayout>
+
+    </RelativeLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="26">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!--TIMER -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:layout_margin="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duration:" />
+
+                <TextView
+                    android:id="@+id/TVDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <!-- Megtett út   -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Distance:" />
+
+                    <TextView
+                        android:id="@+id/TVdistance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                </LinearLayout>
+                <!-- Aktuális seb -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current Velocity:" />
+
+                    <TextView
+                        android:id="@+id/TVcurrentvelo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <!-- Szintkülönbség   -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Elevation Gain:" />
+
+                    <TextView
+                        android:id="@+id/TVelevationgain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                </LinearLayout>
+                <!-- Átlag seb -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_margin="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Average Velocity:" />
+
+                    <TextView
+                        android:id="@+id/TVaveragevelo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <Button
+        android:id="@+id/HistoryBtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:text="History"
+        android:textSize="12sp"
+        android:drawableLeft="@drawable/clock"
         />
-    <Button
-        android:id="@+id/Pause"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Pause"/>
+
 </LinearLayout>
