@@ -2,6 +2,7 @@ package com.example.greg.gpssportraker.location;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.widget.Switch;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -15,12 +16,15 @@ import java.util.Date;
  */
 public class LocationContainer{
     private Date datum;
+    public enum Vehicle {WALK,RUN,BICYCLE,AUTO}
+    private Vehicle vehicle;
     private float distance;
     private double elevationgain;
     private ArrayList<LatLng> myroute = new ArrayList<>();
-    private PolylineOptions poptions = new PolylineOptions();// private ArrayList<PolylineOptions> mycolors = new ArrayList<PolylineOptions>();
+    //private PolylineOptions poptions = new PolylineOptions();//
+    private ArrayList<PolylineOptions> polylines = new ArrayList<PolylineOptions>();
     private ArrayList<Double> magassagok = new ArrayList<>();
-    private ArrayList<Float> speeds = new ArrayList<>();//private float Speeds[] = new float[1];
+    private ArrayList<Float> speeds = new ArrayList<>();
     private float avgspeed;
     private int arraylenght;
     private ArrayList<Float> accu = new ArrayList<>(); //pontosság
@@ -28,9 +32,12 @@ public class LocationContainer{
 
     public LocationContainer(){
         datum = new Date();
-        poptions.color(Color.RED);
-        poptions.width(10);
+        //poptions.color(Color.RED);
+        //poptions.width(10);
         distance = 0;
+    }
+    public void setVehicle(Vehicle jarmu){
+        vehicle = jarmu;
     }
     public void addNewLocation(LatLng newloc, double magassag, float speed, float acc){
         myroute.add(newloc);
@@ -39,7 +46,40 @@ public class LocationContainer{
         accu.add(acc);
 
         arraylenght = myroute.size();
-        poptions.add(newloc);
+
+
+        //                gyalogos         futó        bicikliző      autó
+        //0-> gyors       5 m/s            5 m/s        10 m/s        40m/s
+        //200-> lassú     0 m/s
+        int colorcorrection;
+        switch (vehicle){
+            case WALK:
+                colorcorrection = 200 - (int)speed*20;//gyalogos
+                break;
+            case RUN:
+                colorcorrection = 200 - (int)speed*20;
+                break;
+            case BICYCLE:
+                colorcorrection = 200 - (int)speed*10;
+                break;
+            case AUTO:
+                colorcorrection = 200 - (int)speed*5;
+                break;
+            default:
+                colorcorrection = 200 - (int)speed*20;//gyalogos
+                break;
+        }
+        if (colorcorrection < 0) colorcorrection = 0;
+
+        if (arraylenght >= 2){
+            polylines.add(new PolylineOptions()
+                    .add(myroute.get(arraylenght-2))
+                    .add(myroute.get(arraylenght-1))
+                    .color(Color.rgb(255,colorcorrection,colorcorrection))
+                    .width(20));
+        }
+
+        //poptions.add(newloc);
 
         calculateDistance();
         avgspeed = calculateAverage(speeds);
@@ -100,8 +140,11 @@ public class LocationContainer{
         return elevationgain;
     }
 
-    public PolylineOptions getPolyline(){
-        return poptions;
+    //public PolylineOptions getPolyline(){
+    //    return poptions;
+    //}
+    public ArrayList<PolylineOptions> getPolylines(){
+        return polylines;
     }
 
     public LatLng getLastLatLng() {
@@ -116,5 +159,7 @@ public class LocationContainer{
     public float getAvgspeed(){
         return avgspeed;
     }
+
+
 
 }

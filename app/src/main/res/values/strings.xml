@@ -19,9 +19,8 @@
     <string name="gpsdialogcancel">Cancel</string>
     <string name="gpsdialogOK">GPS Settings</string>
     <string name="historydialogtitle">Tracking is on!</string>
-    <string name="historydialogmsg">Do you want to stop the tracking?</string>
-    <string name="historydialogOK">Yes</string>
-    <string name="historydialogCancel">Cancel</string>
+    <string name="historydialogmsg">Turn off the tracking, before ..</string>
+    <string name="historydialogOK">Ok</string>
     <string name="title_history_list">Histories</string>
     <string name="title_history_detail">History Detail</string>
 </resources>

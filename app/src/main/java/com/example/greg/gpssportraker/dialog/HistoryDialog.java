@@ -24,14 +24,6 @@ public class HistoryDialog extends DialogFragment{
                 builder.setMessage(R.string.historydialogmsg)
                         .setPositiveButton(R.string.historydialogOK, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-
-                                Intent showHistory = new Intent(getActivity(), HistoryListActivity.class);
-                                startActivity(showHistory);
-                            }
-                        })
-                        .setNegativeButton(R.string.historydialogCancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                // User cancelled the dialog
                             }
                         });
         // Create the AlertDialog object and return it

@@ -20,7 +20,8 @@
     <string name="gpsdialogcancel">Mégse</string>
     <string name="gpsdialogOK">GPS beállítások</string>
     <string name="historydialogtitle">GPS követés aktív!</string>
-    <string name="historydialogmsg">Biztos meg akarod szakítani??</string>
-    <string name="historydialogOK">Igen</string>
-    <string name="historydialogCancel">Mégsem</string>
+    <string name="historydialogmsg">Állítsd le a GPS követést, ..</string>
+    <string name="historydialogOK">Rendben</string>
+    <string name="title_history_list">Előzmények</string>
+    <string name="title_history_detail">Előzmény részletei</string>
 </resources>

@@ -13,14 +13,10 @@ import java.util.Map;
  */
 public class DummyContent {
 
-    /**
-     * An array of sample (dummy) items.
-     */
+
     public static List<DummyItem> ITEMS = new ArrayList<DummyItem>();
 
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
+
     public static Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
 
     static {
@@ -35,9 +31,7 @@ public class DummyContent {
         ITEM_MAP.put(item.id, item);
     }
 
-    /**
-     * A dummy item representing a piece of content.
-     */
+
     public static class DummyItem {
         public String id;
         public String content;

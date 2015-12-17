@@ -88,6 +88,10 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepWalk, StartWalkBtn);
+                if (lcont != null){
+                    lcont.setVehicle(LocationContainer.Vehicle.WALK);
+                }
+
             }
         });
         StartRunBtn = (Button) findViewById(R.id.StartRun);
@@ -95,6 +99,9 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepRun, StartRunBtn);
+                if (lcont != null){
+                    lcont.setVehicle(LocationContainer.Vehicle.RUN);
+                }
             }
         });
         StartBicycleBtn = (Button) findViewById(R.id.StartBicycle);
@@ -102,6 +109,9 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepBicycle, StartBicycleBtn);
+                if (lcont != null){
+                    lcont.setVehicle(LocationContainer.Vehicle.BICYCLE);
+                }
             }
         });
         StartAutoBtn = (Button) findViewById(R.id.StartAuto);
@@ -109,6 +119,9 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepAuto, StartAutoBtn);
+                if (lcont != null){
+                    lcont.setVehicle(LocationContainer.Vehicle.AUTO);
+                }
             }
         });
         StopBtn = (Button) findViewById(R.id.Stop);
@@ -132,7 +145,6 @@ public class MapsActivity extends FragmentActivity {
                 if (pref.getBoolean(MONITORINGISON, false)) {
                     HistoryDialog historydialog = new HistoryDialog();
                     historydialog.show(getFragmentManager(),"History Dialog");
-                    //StopButtonClick();//?
                 }
                 else {
                     Intent showHistory = new Intent(getApplicationContext(), HistoryListActivity.class);
@@ -189,7 +201,6 @@ public class MapsActivity extends FragmentActivity {
         else {
             Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
             pressedbtn.startAnimation(showAnim);
-            //várakozás első jelre
             Intent i = new Intent(getApplicationContext(), LocationService.class);
             i.putExtra("minDist", mindist);
 
@@ -306,7 +317,14 @@ public class MapsActivity extends FragmentActivity {
         mMap.animateCamera(update);
 
         if (lcont != null) {
-            mMap.addPolyline(lcont.getPolyline());
+            //mMap.addPolyline(lcont.getPolyline());
+            for (int i = 0; i < lcont.getPolylines().size(); i++){
+                mMap.addPolyline(lcont.getPolylines().get(i));
+            }
+            //for (PolylineOptions polys : lcont.getPolylines()){
+            //    mMap.addPolyline(polys);
+            //}
+
             currvelo.setText(speedformat(lcont.getLastSpeed()));//(Float.toString(lcont.getLastSpeed())+ " m/s");
             distance.setText(distanceFormat(lcont.getDistance()));
             avrvelo.setText(speedformat(lcont.getAvgspeed()));//(Float.toString(lcont.getAvgspeed())+ " m/s");
@@ -331,7 +349,6 @@ public class MapsActivity extends FragmentActivity {
             currentAccu = newLocation.getAccuracy();
 
             //Toast.makeText(getApplicationContext(),Float.toString(currentAccu),Toast.LENGTH_LONG).show();
-
             //if (currentAccu <= 10f) {
                 if (lcont != null) {
                     lcont.addNewLocation(currentlatlng, currentaltitude, currentspeed, currentAccu);
