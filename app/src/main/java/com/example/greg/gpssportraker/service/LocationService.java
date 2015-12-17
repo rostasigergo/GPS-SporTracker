@@ -24,8 +24,6 @@ public class LocationService extends Service implements LocationListener {
     private boolean locationMonitorRunning = false;
     private LDLocationManager ldLocationManager = null;
     private float minDist;
-    //firslocation?
-    //lastlocation
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
@@ -49,12 +47,9 @@ public class LocationService extends Service implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-
-        //First, lastlocaiton kezelés
         Intent locchangedintent = new Intent(BR_NEW_LOCATION);
         locchangedintent.putExtra(KEY_LOCATION,location);
         LocalBroadcastManager.getInstance(this).sendBroadcast(locchangedintent);
-        Toast.makeText(getApplicationContext(), "LocationChanged service point send", Toast.LENGTH_LONG).show();
     }
 
     @Override

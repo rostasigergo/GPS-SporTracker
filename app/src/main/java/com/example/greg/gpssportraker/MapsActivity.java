@@ -36,11 +36,8 @@ import java.text.NumberFormat;
 
 public class MapsActivity extends FragmentActivity {
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    //private PolylineOptions vonaloptions2;
+    private GoogleMap mMap;
 
-    private boolean monitoringison;
-    private boolean pauseison;
     private int elapsedTime;
 
     private LocationContainer lcont;
@@ -150,16 +147,14 @@ public class MapsActivity extends FragmentActivity {
         elevationgain = (TextView) findViewById(R.id.TVelevationgain);
         avrvelo = (TextView) findViewById(R.id.TVaveragevelo);
 
-        monitoringison = pref.getBoolean(MONITORINGISON, false);
-        pauseison = pref.getBoolean(PAUSEISON, false);
-        if (monitoringison){
+        if (pref.getBoolean(MONITORINGISON, false)){
             setStopButtonsVisible();
         }
         else {
             setStartButtonsVisible();
         }
 
-        if (pauseison) {
+        if (pref.getBoolean(PAUSEISON, false)) {
             PauseBtn.setText(R.string.resume);
 
         }
@@ -169,8 +164,7 @@ public class MapsActivity extends FragmentActivity {
 
 
         elapsedTime = pref.getInt(ELAPSEDTIME,0);
-        //2 nap korlát!
-        timer = new CountDownTimer(172800000,1000) {
+        timer = new CountDownTimer(172800000,1000) {//2nap..
             @Override
             public void onTick(long millisUntilFinished) {
                 elapsedTime++;
@@ -233,8 +227,7 @@ public class MapsActivity extends FragmentActivity {
         Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
         PauseBtn.startAnimation(showAnim);
 
-        pauseison = pref.getBoolean(PAUSEISON, false);
-        if (pauseison) {
+        if (pref.getBoolean(PAUSEISON, false)) {
             editor.putBoolean(PAUSEISON, false);
             i.putExtra("minDist", pref.getFloat(CURRENTMINDIST, 10));
             PauseBtn.setText(R.string.pause);
@@ -314,9 +307,10 @@ public class MapsActivity extends FragmentActivity {
 
         if (lcont != null) {
             mMap.addPolyline(lcont.getPolyline());
-            currvelo.setText(Float.toString(lcont.getLastSpeed())+ " m/s");
+            currvelo.setText(speedformat(lcont.getLastSpeed()));//(Float.toString(lcont.getLastSpeed())+ " m/s");
             distance.setText(distanceFormat(lcont.getDistance()));
-
+            avrvelo.setText(speedformat(lcont.getAvgspeed()));//(Float.toString(lcont.getAvgspeed())+ " m/s");
+            elevationgain.setText(Double.toString(lcont.getElevationgain()) + " m");
         }
 
 
@@ -325,6 +319,7 @@ public class MapsActivity extends FragmentActivity {
     LatLng currentlatlng;
     double currentaltitude;
     float currentspeed;
+    float currentAccu;
     private BroadcastReceiver NewLocMsg = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -333,12 +328,15 @@ public class MapsActivity extends FragmentActivity {
             currentlatlng = new LatLng(newLocation.getLatitude(),newLocation.getLongitude());
             currentaltitude = newLocation.getAltitude();
             currentspeed = newLocation.getSpeed();
+            currentAccu = newLocation.getAccuracy();
 
-            if (lcont != null) {
-                lcont.addNewLocation(currentlatlng,currentaltitude,currentspeed);
-                //lcont.save();
-            }
-            //
+            //Toast.makeText(getApplicationContext(),Float.toString(currentAccu),Toast.LENGTH_LONG).show();
+
+            //if (currentAccu <= 10f) {
+                if (lcont != null) {
+                    lcont.addNewLocation(currentlatlng, currentaltitude, currentspeed, currentAccu);
+                }
+            //}
             setUpMap();
 
         }
@@ -358,7 +356,19 @@ public class MapsActivity extends FragmentActivity {
         return ido;
     }
     private String distanceFormat(float distance){
-        String dist = Float.toString(distance) + " m";
+        //String dist = Float.toString(distance) + " m";
+        String dist;
+        if (distance < 10000) {
+            dist = String.format("%.0f", distance) + " [m]";
+        }
+        else{
+            dist = String.format("%.2f", distance/1000) + " [km]";
+        }
         return dist;
+    }
+    private String speedformat(float speed){
+        String sebesseg = String.format("%.1f",speed*3.6) + " [km/h]";
+
+        return sebesseg;
     }
 }
