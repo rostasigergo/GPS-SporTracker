@@ -37,7 +37,7 @@ import java.text.NumberFormat;
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
-    private PolylineOptions vonaloptions2;
+    //private PolylineOptions vonaloptions2;
 
     private boolean monitoringison;
     private boolean pauseison;
@@ -83,6 +83,8 @@ public class MapsActivity extends FragmentActivity {
         pref = getSharedPreferences(MYPREF, MODE_PRIVATE);
         editor = pref.edit();
 
+
+        lcont = new LocationContainer();
 
         StartWalkBtn = (Button) findViewById(R.id.StartWalk);
         StartWalkBtn.setOnClickListener(new View.OnClickListener() {
@@ -165,13 +167,9 @@ public class MapsActivity extends FragmentActivity {
             PauseBtn.setText(R.string.pause);
         }
 
-        vonaloptions2 = new PolylineOptions();
-        vonaloptions2.color(Color.RED);
-        vonaloptions2.width(10);
-        lcont = new LocationContainer();
 
         elapsedTime = pref.getInt(ELAPSEDTIME,0);
-        //2 nap korlát!!!
+        //2 nap korlát!
         timer = new CountDownTimer(172800000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -198,9 +196,9 @@ public class MapsActivity extends FragmentActivity {
             Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
             pressedbtn.startAnimation(showAnim);
             //várakozás első jelre
-            //visszaszámlálás!!
             Intent i = new Intent(getApplicationContext(), LocationService.class);
             i.putExtra("minDist", mindist);
+
             editor.putFloat(CURRENTMINDIST, mindist);
             editor.putBoolean(MONITORINGISON, true);
             editor.putBoolean(PAUSEISON, false);
@@ -208,11 +206,13 @@ public class MapsActivity extends FragmentActivity {
             editor.putInt(ELAPSEDTIME,elapsedTime);
             editor.commit();
             timer.start();
+
             PauseBtn.setText(R.string.pause);
             setStopButtonsVisible();
             startService(i);
         }
     }
+
     private void StopButtonClick(){
         Intent i = new Intent(getApplicationContext(), LocationService.class);
         editor.putBoolean(MONITORINGISON, false);
@@ -225,6 +225,7 @@ public class MapsActivity extends FragmentActivity {
         */
         stopService(i);
     }
+
 
     private void PauseButtonClick(){
 
@@ -250,6 +251,7 @@ public class MapsActivity extends FragmentActivity {
         editor.commit();
 
     }
+
     private void setStartButtonsVisible(){
         StartWalkBtn.setVisibility(View.VISIBLE);
         StartRunBtn.setVisibility(View.VISIBLE);
@@ -293,71 +295,51 @@ public class MapsActivity extends FragmentActivity {
     }
 
 
-    /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mMap} is not null.
-     * <p/>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p/>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
-     */
     private void setUpMapIfNeeded() {
         if (mMap == null) {
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
             if (mMap != null) {
-                setUpMap();
+                //setUpMap();
             }
         }
     }
 
+    CameraUpdate update;
     private void setUpMap() {
-        //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
 
-        //line = mMap.addPolyline(new PolylineOptions()
-        //        .add(new LatLng(51.5, -0.1), new LatLng(40.7, -74.0),new LatLng(0,0))
-        //        .width(5)
-        //        .color(Color.RED));//addAll betöltéshez
+        //Kamera Frissítés!
+        update = CameraUpdateFactory.newLatLngZoom(currentlatlng,16);
+        mMap.animateCamera(update);
+
+        if (lcont != null) {
+            mMap.addPolyline(lcont.getPolyline());
+            currvelo.setText(Float.toString(lcont.getLastSpeed())+ " m/s");
+            distance.setText(distanceFormat(lcont.getDistance()));
+
+        }
 
 
     }
 
-    CameraUpdate update;
+    LatLng currentlatlng;
+    double currentaltitude;
+    float currentspeed;
     private BroadcastReceiver NewLocMsg = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Location newLocation = intent.getParcelableExtra(LocationService.KEY_LOCATION);
-            //myroute.add(new LatLng(newLocation.getLatitude(),newLocation.getLongitude()));
-            lcont.addPoint(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
 
+            currentlatlng = new LatLng(newLocation.getLatitude(),newLocation.getLongitude());
+            currentaltitude = newLocation.getAltitude();
+            currentspeed = newLocation.getSpeed();
 
-            //new LatLng(newLocation.getLatitude(), newLocation.getLongitude()   külön VÁLTOZÓBA!!!!!!
-
-            vonaloptions2.add(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
-            float speed = newLocation.getSpeed();//m/s -ba
-            /* int sp = (int)speed*10;
-            if (sp > 255) sp = 255;
-            vonaloptions2.color(Color.rgb(sp,sp,sp));*/
-
-
-            mMap.addPolyline(vonaloptions2);
-            //currentLocation.getLatitude();
-            //currentLocation.getLongitude();
-            //currentLocation.getAltitude();
-            //currentLocation.getSpeed();
-            //currentLocation.getTime();  ha kellene....
-
-            mMap.addMarker(new MarkerOptions().position(new LatLng(newLocation.getLatitude(), newLocation.getLongitude())).title("Marker + " + speed));
-            update = CameraUpdateFactory.newLatLngZoom(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()),16);
-            mMap.animateCamera(update);
-            //Toast.makeText(getApplicationContext(), "Wow, a new point received", Toast.LENGTH_LONG).show();
+            if (lcont != null) {
+                lcont.addNewLocation(currentlatlng,currentaltitude,currentspeed);
+                //lcont.save();
+            }
+            //
+            setUpMap();
 
         }
     };
@@ -374,5 +356,9 @@ public class MapsActivity extends FragmentActivity {
         int secs = maradek;
         ido = myFormat.format(hours) + ":" + myFormat.format(mins) + ":" + myFormat.format(secs);
         return ido;
+    }
+    private String distanceFormat(float distance){
+        String dist = Float.toString(distance) + " m";
+        return dist;
     }
 }

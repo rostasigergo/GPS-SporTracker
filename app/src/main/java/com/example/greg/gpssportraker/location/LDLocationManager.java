@@ -20,7 +20,7 @@ public class LDLocationManager {
     }
 
     public void startLocationMinitoring(float minDist){
-        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,minDist,loclistener);//legalább 10 m pontos teszteléshez 50...
+        locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,minDist,loclistener);
 
     }
     public void stopLocationMonitoring(){
