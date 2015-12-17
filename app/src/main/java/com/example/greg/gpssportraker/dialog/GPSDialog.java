@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.greg.gpssportraker.R;
+
 /**
  * Created by Geerg on 2015.12.01..
  */
@@ -15,14 +17,14 @@ public class GPSDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("GPS module is disabled!");
-        builder.setMessage("Go to the GPS settings of your phone in order to activate it")
-                .setPositiveButton("GPS Settings", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.gpsdialogtitle);
+        builder.setMessage(R.string.gpsdialogmsg)
+                .setPositiveButton(R.string.gpsdialogOK, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.gpsdialogcancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
                     }

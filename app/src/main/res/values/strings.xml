@@ -1,4 +1,27 @@
 <resources>
     <string name="app_name">GPS SporTraker</string>
     <string name="title_activity_maps">GPS SporTracker</string>
+    <string name="resume">Resume</string>
+    <string name="pause">Pause</string>
+    <string name="stop">Stop</string>
+    <string name="walk">Walk</string>
+    <string name="run">Run</string>
+    <string name="bicycle">Bicycle</string>
+    <string name="auto">Auto</string>
+    <string name="duration">Duration:</string>
+    <string name="distance">Distance:</string>
+    <string name="currentvelocity">Current Velocity:</string>
+    <string name="avaragevelocity">Average Velocity:</string>
+    <string name="elevationgain">Elevation Gain:</string>
+    <string name="history">History</string>
+    <string name="gpsdialogtitle">GPS module is disabled!</string>
+    <string name="gpsdialogmsg">Go to the GPS settings of your phone in order to activate it!</string>
+    <string name="gpsdialogcancel">Cancel</string>
+    <string name="gpsdialogOK">GPS Settings</string>
+    <string name="historydialogtitle">Tracking is on!</string>
+    <string name="historydialogmsg">Do you want to stop the tracking?</string>
+    <string name="historydialogOK">Yes</string>
+    <string name="historydialogCancel">Cancel</string>
+    <string name="title_history_list">Histories</string>
+    <string name="title_history_detail">History Detail</string>
 </resources>

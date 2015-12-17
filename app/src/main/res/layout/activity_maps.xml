@@ -27,7 +27,7 @@
                 android:id="@+id/StartWalk"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Walk"
+                android:text="@string/walk"
                 android:textSize="12sp"
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/walking"
@@ -37,7 +37,7 @@
                 android:id="@+id/StartRun"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Run"
+                android:text="@string/run"
                 android:textSize="12sp"
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/running"
@@ -47,7 +47,7 @@
                 android:id="@+id/StartBicycle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Bicycle"
+                android:text="@string/bicycle"
                 android:textSize="12sp"
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/bicycle"
@@ -57,7 +57,7 @@
                 android:id="@+id/StartAuto"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Auto"
+                android:text="@string/auto"
                 android:textSize="12sp"
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/car"
@@ -72,20 +72,22 @@
                 android:id="@+id/Pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pause"
+                android:text="@string/pause"
                 android:textSize="12sp"
                 android:layout_weight="1"
                 android:visibility="invisible"
+                android:drawableLeft="@drawable/pause"
                 android:background="@drawable/btn_orange_matte"
                 />
             <Button
                 android:id="@+id/Stop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Stop"
+                android:text="@string/stop"
                 android:textSize="12sp"
                 android:layout_weight="1"
                 android:visibility="visible"
+                android:drawableLeft="@drawable/stop"
                 android:background="@drawable/btn_red_matte"
                 />
         </LinearLayout>
@@ -112,7 +114,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Duration:" />
+                    android:text="@string/duration" />
 
                 <TextView
                     android:id="@+id/TVDuration"
@@ -139,7 +141,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Distance:" />
+                        android:text="@string/distance" />
 
                     <TextView
                         android:id="@+id/TVdistance"
@@ -160,7 +162,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Current Velocity:" />
+                        android:text="@string/currentvelocity" />
 
                     <TextView
                         android:id="@+id/TVcurrentvelo"
@@ -187,7 +189,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Elevation Gain:" />
+                        android:text="@string/elevationgain" />
 
                     <TextView
                         android:id="@+id/TVelevationgain"
@@ -208,7 +210,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Average Velocity:" />
+                        android:text="@string/avaragevelocity" />
 
                     <TextView
                         android:id="@+id/TVaveragevelo"
@@ -225,7 +227,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
-        android:text="History"
+        android:text="@string/history"
         android:textSize="12sp"
         android:drawableLeft="@drawable/clock"
         />

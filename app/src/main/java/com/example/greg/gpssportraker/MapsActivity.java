@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.greg.gpssportraker.dialog.GPSDialog;
+import com.example.greg.gpssportraker.dialog.HistoryDialog;
+import com.example.greg.gpssportraker.history.HistoryListActivity;
 import com.example.greg.gpssportraker.location.LocationContainer;
 import com.example.greg.gpssportraker.service.LocationService;
 import com.google.android.gms.maps.CameraUpdate;
@@ -82,33 +84,32 @@ public class MapsActivity extends FragmentActivity {
         editor = pref.edit();
 
 
-
         StartWalkBtn = (Button) findViewById(R.id.StartWalk);
         StartWalkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StartButtonClick(stepWalk);
+                StartButtonClick(stepWalk, StartWalkBtn);
             }
         });
         StartRunBtn = (Button) findViewById(R.id.StartRun);
         StartRunBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StartButtonClick(stepRun);
+                StartButtonClick(stepRun, StartRunBtn);
             }
         });
         StartBicycleBtn = (Button) findViewById(R.id.StartBicycle);
         StartBicycleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StartButtonClick(stepBicycle);
+                StartButtonClick(stepBicycle, StartBicycleBtn);
             }
         });
         StartAutoBtn = (Button) findViewById(R.id.StartAuto);
         StartAutoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StartButtonClick(stepAuto);
+                StartButtonClick(stepAuto, StartAutoBtn);
             }
         });
         StopBtn = (Button) findViewById(R.id.Stop);
@@ -129,7 +130,15 @@ public class MapsActivity extends FragmentActivity {
         HistoryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //New Itent stb
+                if (pref.getBoolean(MONITORINGISON, false)) {
+                    HistoryDialog historydialog = new HistoryDialog();
+                    historydialog.show(getFragmentManager(),"History Dialog");
+                    //StopButtonClick();//?
+                }
+                else {
+                    Intent showHistory = new Intent(getApplicationContext(), HistoryListActivity.class);
+                    startActivity(showHistory);
+                }
             }
         });
 
@@ -149,10 +158,11 @@ public class MapsActivity extends FragmentActivity {
         }
 
         if (pauseison) {
-            PauseBtn.setText("Resume");
+            PauseBtn.setText(R.string.resume);
+
         }
         else {
-            PauseBtn.setText("Pause");
+            PauseBtn.setText(R.string.pause);
         }
 
         vonaloptions2 = new PolylineOptions();
@@ -177,13 +187,18 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
-    private void StartButtonClick(float mindist){
+    private void StartButtonClick(float mindist, Button pressedbtn){
         String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
         if(!provider.contains("gps")){ //GPS kikapcsolva
+            //Animation Wrong!
             GPSDialog gpsdialog = new GPSDialog();
             gpsdialog.show(getFragmentManager(),"GPS Dialog");
         }
         else {
+            Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
+            pressedbtn.startAnimation(showAnim);
+            //várakozás első jelre
+            //visszaszámlálás!!
             Intent i = new Intent(getApplicationContext(), LocationService.class);
             i.putExtra("minDist", mindist);
             editor.putFloat(CURRENTMINDIST, mindist);
@@ -193,7 +208,7 @@ public class MapsActivity extends FragmentActivity {
             editor.putInt(ELAPSEDTIME,elapsedTime);
             editor.commit();
             timer.start();
-            PauseBtn.setText("Pause");
+            PauseBtn.setText(R.string.pause);
             setStopButtonsVisible();
             startService(i);
         }
@@ -215,20 +230,19 @@ public class MapsActivity extends FragmentActivity {
 
         Intent i = new Intent(getApplicationContext(), LocationService.class);
         Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
-
         PauseBtn.startAnimation(showAnim);
 
         pauseison = pref.getBoolean(PAUSEISON, false);
         if (pauseison) {
             editor.putBoolean(PAUSEISON, false);
             i.putExtra("minDist", pref.getFloat(CURRENTMINDIST, 10));
-            PauseBtn.setText("Pause");
+            PauseBtn.setText(R.string.pause);
             timer.start();
             startService(i);
 
         } else {
             editor.putBoolean(PAUSEISON, true);
-            PauseBtn.setText("Resume");
+            PauseBtn.setText(R.string.resume);
             timer.cancel();
             editor.putInt(ELAPSEDTIME, elapsedTime);
             stopService(i);
@@ -295,24 +309,15 @@ public class MapsActivity extends FragmentActivity {
      * method in {@link #onResume()} to guarantee that it will be called.
      */
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
-            // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
             }
         }
     }
 
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
     private void setUpMap() {
         //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
 
@@ -324,8 +329,6 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
-
-    int step = 0;
     CameraUpdate update;
     private BroadcastReceiver NewLocMsg = new BroadcastReceiver() {
         @Override
@@ -333,6 +336,7 @@ public class MapsActivity extends FragmentActivity {
             Location newLocation = intent.getParcelableExtra(LocationService.KEY_LOCATION);
             //myroute.add(new LatLng(newLocation.getLatitude(),newLocation.getLongitude()));
             lcont.addPoint(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()));
+
 
             //new LatLng(newLocation.getLatitude(), newLocation.getLongitude()   külön VÁLTOZÓBA!!!!!!
 
@@ -342,19 +346,6 @@ public class MapsActivity extends FragmentActivity {
             if (sp > 255) sp = 255;
             vonaloptions2.color(Color.rgb(sp,sp,sp));*/
 
-            step++;
-            if (step == 1){
-                vonaloptions2.color(Color.GREEN);
-            }
-            if (step == 2){
-                vonaloptions2.color(Color.WHITE);
-            }
-            if (step == 3){
-                vonaloptions2.color(Color.BLUE);
-            }
-            if (step > 3){
-                vonaloptions2.color(Color.RED);
-            }
 
             mMap.addPolyline(vonaloptions2);
             //currentLocation.getLatitude();
@@ -366,7 +357,7 @@ public class MapsActivity extends FragmentActivity {
             mMap.addMarker(new MarkerOptions().position(new LatLng(newLocation.getLatitude(), newLocation.getLongitude())).title("Marker + " + speed));
             update = CameraUpdateFactory.newLatLngZoom(new LatLng(newLocation.getLatitude(), newLocation.getLongitude()),16);
             mMap.animateCamera(update);
-            Toast.makeText(getApplicationContext(), "Wow, a new point received", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Wow, a new point received", Toast.LENGTH_LONG).show();
 
         }
     };
