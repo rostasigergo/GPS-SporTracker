@@ -8,34 +8,28 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.greg.gpssportraker.R;
-import com.example.greg.gpssportraker.history.dummy.DummyContent;
+import com.example.greg.gpssportraker.history.dummy.RouteContent;
+import com.google.android.gms.maps.model.PolylineOptions;
 
-/**
- * A list fragment representing a list of Histories. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link HistoryDetailFragment}.
- * <p/>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
+import java.lang.reflect.Array;
+import java.net.NoRouteToHostException;
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class HistoryListFragment extends ListFragment {
 
 
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-
     private Callbacks mCallbacks = sDummyCallbacks;
-
 
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
-
     public interface Callbacks {
-
         public void onItemSelected(String id);
-    }
 
+    }
 
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
@@ -43,20 +37,42 @@ public class HistoryListFragment extends ListFragment {
         }
     };
 
-
     public HistoryListFragment() {
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
+
+        ArrayList<RouteContent.RouteItem> rcf = new ArrayList<RouteContent.RouteItem>();
+
+        long hlCsize = HistoryLocContainer.count(HistoryLocContainer.class);
+        for (int i = 1; i <= hlCsize; i++){
+            HistoryLocContainer hlC = HistoryLocContainer.findById(HistoryLocContainer.class, i);
+            rcf.add(new RouteContent.RouteItem(Integer.toString(i),
+                    hlC.getVehicle(),
+                    hlC.getDatum(),
+                    hlC.getDistance(),
+                    hlC.getElevationGain(),
+                    hlC.getMyroute(),
+                    hlC.getPolylines(),
+                    hlC.getMagassagok(),
+                    hlC.getSpeeds(),
+                    hlC.getAvgSpeed(),
+                    hlC.getNumberOfElements(),
+                    hlC.getDuration()));
+            RouteContent.addItem(rcf.get(i-1));
+        }
+
+        HistoryAdapter hsa = new HistoryAdapter(getActivity().getApplicationContext(),rcf);
+        setListAdapter(hsa);
+
+        //setListAdapter(new ArrayAdapter<RouteContent.RouteItem>(getActivity().getApplicationContext(), R.layout.historyrow,RouteContent.ITEMS));
+        //new ArrayAdapter<RouteContent.RouteItem>(getActivity().getApplicationContext(),)
+        //HistoryAdapter historyAdapter = new HistoryAdapter(getActivity().getApplicationContext(),RouteContent.ITEMS);
+        //setListAdapter(historyAdapter);
     }
 
     @Override
@@ -96,7 +112,7 @@ public class HistoryListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(RouteContent.ITEMS.get(position).id);
     }
 
     @Override

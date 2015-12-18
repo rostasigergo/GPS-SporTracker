@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -17,10 +16,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.greg.gpssportraker.dialog.GPSDialog;
 import com.example.greg.gpssportraker.dialog.HistoryDialog;
+import com.example.greg.gpssportraker.history.HistoryLocContainer;
 import com.example.greg.gpssportraker.history.HistoryListActivity;
 import com.example.greg.gpssportraker.location.LocationContainer;
 import com.example.greg.gpssportraker.service.LocationService;
@@ -29,8 +28,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.orm.SugarContext;
 
 import java.text.NumberFormat;
 
@@ -74,6 +72,7 @@ public class MapsActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SugarContext.init(this);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
@@ -81,13 +80,14 @@ public class MapsActivity extends FragmentActivity {
         editor = pref.edit();
 
 
-        lcont = new LocationContainer();
+        //lcont = new LocationContainer();
 
         StartWalkBtn = (Button) findViewById(R.id.StartWalk);
         StartWalkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepWalk, StartWalkBtn);
+                lcont = new LocationContainer();
                 if (lcont != null){
                     lcont.setVehicle(LocationContainer.Vehicle.WALK);
                 }
@@ -99,6 +99,7 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepRun, StartRunBtn);
+                lcont = new LocationContainer();
                 if (lcont != null){
                     lcont.setVehicle(LocationContainer.Vehicle.RUN);
                 }
@@ -109,6 +110,7 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepBicycle, StartBicycleBtn);
+                lcont = new LocationContainer();
                 if (lcont != null){
                     lcont.setVehicle(LocationContainer.Vehicle.BICYCLE);
                 }
@@ -119,6 +121,7 @@ public class MapsActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 StartButtonClick(stepAuto, StartAutoBtn);
+                lcont = new LocationContainer();
                 if (lcont != null){
                     lcont.setVehicle(LocationContainer.Vehicle.AUTO);
                 }
@@ -191,16 +194,16 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
+
     private void StartButtonClick(float mindist, Button pressedbtn){
         String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
         if(!provider.contains("gps")){ //GPS kikapcsolva
-            //Animation Wrong!
             GPSDialog gpsdialog = new GPSDialog();
             gpsdialog.show(getFragmentManager(),"GPS Dialog");
         }
         else {
-            Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
-            pressedbtn.startAnimation(showAnim);
+            //Animation showAnim = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pushanim);
+            //pressedbtn.startAnimation(showAnim);
             Intent i = new Intent(getApplicationContext(), LocationService.class);
             i.putExtra("minDist", mindist);
 
@@ -225,10 +228,20 @@ public class MapsActivity extends FragmentActivity {
         timer.cancel();
         editor.commit();
         setStartButtonsVisible();
+
+        stopService(i);
         /*
             MENTÉS!!!
         */
-        stopService(i);
+        if (lcont != null) {
+            HistoryLocContainer history = new HistoryLocContainer(lcont.getVehicle(), lcont.getDate(), lcont.getDistance(), lcont.getElevationgain(),
+                    lcont.getMyroute(), lcont.getPolylines(), lcont.getAltitudes(), lcont.getSpeeds(), lcont.getAvgspeed(), lcont.getLenght(),secToTimeFormat(elapsedTime));
+            history.save();
+        }
+        /*
+        HistoryLocContainer historyx = HistoryLocContainer.findById(HistoryLocContainer.class, 2);
+        float distance = historyx.getDistance();
+        Toast.makeText(getApplicationContext(),Float.toString(distance),Toast.LENGTH_LONG).show();*/
     }
 
 
@@ -313,14 +326,21 @@ public class MapsActivity extends FragmentActivity {
     private void setUpMap() {
 
         //Kamera Frissítés!
-        update = CameraUpdateFactory.newLatLngZoom(currentlatlng,16);
+        update = CameraUpdateFactory.newLatLngZoom(currentlatlng,18);
         mMap.animateCamera(update);
 
         if (lcont != null) {
-            //mMap.addPolyline(lcont.getPolyline());
+            mMap.clear();
             for (int i = 0; i < lcont.getPolylines().size(); i++){
                 mMap.addPolyline(lcont.getPolylines().get(i));
             }
+
+
+                /*mMap.addPolyline(lcont.getPolylines().get(lcont.getPolylines().size()-1));
+            if (lcont.getLenght() <= 1) {
+                mMap.addMarker(new MarkerOptions().position(lcont.getLastLatLng()).title(getString(R.string.startmarker)));
+            }*/
+            //}
             //for (PolylineOptions polys : lcont.getPolylines()){
             //    mMap.addPolyline(polys);
             //}
@@ -328,7 +348,7 @@ public class MapsActivity extends FragmentActivity {
             currvelo.setText(speedformat(lcont.getLastSpeed()));//(Float.toString(lcont.getLastSpeed())+ " m/s");
             distance.setText(distanceFormat(lcont.getDistance()));
             avrvelo.setText(speedformat(lcont.getAvgspeed()));//(Float.toString(lcont.getAvgspeed())+ " m/s");
-            elevationgain.setText(Double.toString(lcont.getElevationgain()) + " m");
+            elevationgain.setText(Double.toString(lcont.getElevationgain()) + " [m]");
         }
 
 
@@ -385,7 +405,6 @@ public class MapsActivity extends FragmentActivity {
     }
     private String speedformat(float speed){
         String sebesseg = String.format("%.1f",speed*3.6) + " [km/h]";
-
         return sebesseg;
     }
 }

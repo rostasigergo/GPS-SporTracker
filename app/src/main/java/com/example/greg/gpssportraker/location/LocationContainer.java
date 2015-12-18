@@ -160,6 +160,31 @@ public class LocationContainer{
         return avgspeed;
     }
 
-
+    public int getVehicle(){
+        switch (vehicle){
+            case WALK:
+                return 1;
+            case RUN:
+                return 2;
+            case BICYCLE:
+                return 3;
+            case AUTO:
+                return 4;
+            default:
+                return 1;
+        }
+    }
+    public Date getDate(){
+        return datum;
+    }
+    public ArrayList<LatLng> getMyroute(){
+        return myroute;
+    }
+    public ArrayList<Double> getAltitudes(){
+        return magassagok;
+    }
+    public ArrayList<Float> getSpeeds(){
+        return speeds;
+    }
 
 }

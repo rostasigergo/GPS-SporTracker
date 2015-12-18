@@ -4,7 +4,7 @@
     <string name="title_activity_maps">GPS SporTracker</string>
     <string name="resume">Folytatás</string>
     <string name="pause">Szünet</string>
-    <string name="stop">Megállítás!</string>
+    <string name="stop">Leállítás</string>
     <string name="walk">Séta</string>
     <string name="run">Futás</string>
     <string name="bicycle">Kerékpár</string>
@@ -24,4 +24,5 @@
     <string name="historydialogOK">Rendben</string>
     <string name="title_history_list">Előzmények</string>
     <string name="title_history_detail">Előzmény részletei</string>
+    <string name="startmarker">Indulás!</string>
 </resources>

@@ -23,4 +23,5 @@
     <string name="historydialogOK">Ok</string>
     <string name="title_history_list">Histories</string>
     <string name="title_history_detail">History Detail</string>
+    <string name="startmarker">Start!</string>
 </resources>
